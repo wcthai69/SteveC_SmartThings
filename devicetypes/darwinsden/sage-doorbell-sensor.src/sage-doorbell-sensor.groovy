@@ -81,7 +81,7 @@ metadata {
 }
  
 def parse(String description) {
-	//log.debug "description: $description"
+	log.debug "description: $description"
     
 	Map map = [:]
 	if (description?.startsWith('catchall:')) {
@@ -105,11 +105,16 @@ def parse(String description) {
 private Map parseCatchAllMessage(String description) {
     Map resultMap = [:]
     def cluster = zigbee.parse(description)
+    log.debug ("description: $description")
+    log.debug ("cluster: $cluster")
     if (shouldProcessMessage(cluster)) { 
-        log.debug ("cluster: $cluster")
+        log.debug ("processing cluster: $cluster")
         switch(cluster.clusterId) {
             case 0x0006:
             	resultMap = getDoorbellPressResult(cluster)
+                break
+            case 0x0001:
+            	resultMap = getBatteryResult(cluster.data.last())
                 break
         }
     }
